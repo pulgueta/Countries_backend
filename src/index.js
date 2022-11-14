@@ -1,8 +1,9 @@
-import express from "express";
-import cors from "cors";
-import { Pool } from "pg";
+const express = require("express");
+const cors = require("cors");
+const { Pool } = require("pg");
 
-const PORT = 3000;
+const app = express();
+app.use(cors());
 
 const db = new Pool({
   host: process.env.AWS_HOST,
@@ -15,9 +16,23 @@ const db = new Pool({
   },
 });
 
-const app = express();
+app.post("/create", async (req, res) => {
+  const name = req.body.name;
+  const country = req.body.country;
 
-app.use(cors());
-app.listen(PORT);
+  const resp = await db.query(
+    `INSERT INTO country (name, country) VALUES (${name}, ${country})`
+  );
 
-console.log(`Server on port ${PORT}`);
+  res.send("Inserted");
+});
+
+app.get("/list", async (_, res) => {
+  const countries = await db.query("SELECT * FROM country");
+
+  res.send(countries.rows);
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server is running...");
+});
