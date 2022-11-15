@@ -22,14 +22,14 @@ app.post("/create", async (req, res) => {
   const country = req.body.country;
 
   const resp = await db.query(
-    `INSERT INTO country (name, country) VALUES (${name}, ${country})`
+    `INSERT INTO countries (name, country) VALUES (${name}, ${country})`
   );
 
   res.send("Inserted");
 });
 
 app.get("/list", async (_, res) => {
-  const countries = await db.query("SELECT * FROM country");
+  const countries = await db.query("SELECT * FROM countries");
 
   res.send(countries.rows);
 });
